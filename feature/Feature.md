@@ -1,0 +1,67 @@
+- 기능 개발 관련 기록
+
+<br>
+
+## 📌 기도 제목 신규 발행 기능 개발
+
+- twitter의 simple read / push model 방식 고려
+- 기도 제목 신규 발행 성공시 기도 제목 발행 이벤트 produce
+- 기도 제목 발행 이벤트 consume하는 곳에서 timeline(feed) 별도 테이블에 작성자를 팔로우 하는 사람에 대해서 bulk insert(push)
+- 완전하지 않지만 fan-out 방식으로 개발
+
+<br>
+
+## 📌 기도 제목 피드 조회 개발
+
+<br>
+
+## 📌 좋아요 기능 개발
+
+### 프로세스
+
+1. 모든 작업 one transaction에 해결 
+
+```
+1. 좋아요 버튼 클릭시 `prayer_likes` 신규 저장
+2. `prayer_lapses`의 `like_count` 필드에 +1 update
+```
+위 방식은 구현방식은 아주 간단해서 좋다.  
+하지만 치명적인 단점 존재
+- 사용자들이 좋아요 누를 때마다 개별건 마다 prayer_lapses 데이터에 lock을 걸어야 한다.
+- 이렇게 되면 동시성에 대한 성능이 떨어지게 된다.  
+(만약 팔로우가 많은 유저의 게시글에 대해서 한꺼번에 많은 사람들이 좋아요를 누른다면?? 대기열마냥 차례차례 기다려야한다.)
+
+2. 배치로 진행 (요걸로 진행해보기)
+
+```
+1. 좋아요 버튼 클릭시 `prayer_likes` 신규 저장
+2. `prayer_like_events` 신규 저장  
+3. 배치로 `prayer_like_events` 데이터 가져와서 prayer_lapses - like_count update
+```
+
+위 프로세스의 문제점은 배치 스케줄러의 주기에 따라 좋아요 반영에 대해 지연 발생(완전 실시간 X)
+
+만약 event driven 방식이라면 개선 가능한 것인가?
+
+3. event driven 방식 + 좋아요 집계 배치 혼합
+
+```
+- `prayer-house-api` application (API 단계)
+1. 좋아요 버튼 클릭시 기도 제목 경과(`prayer_lapses`), 좋아요한 회원(`member`) db 조회
+2. 정상 상태 체크된 데이터 조회 후 kafka 통해 like event producing
+
+- `prayer-house-event` application (consuming 단계)
+1. like event consuming
+2. 기도 제목 좋아요 테이블 `prayer_likes` 데이터 insert
+3. 기도 제목 좋아요 레코드 `prayer_like_records` 데이터 insert (배치를 통한 like_count 계산 update 위함)
+4. 기도 제목 좋아요 개수 캐시 increment
+  4-1. 여기에 Distributed Lock(Redisson) 적용한 비동기 처리 과정에서 atomic 보장
+  4-2. Redis INCR 자체에 atomic 연산을 지원하지만 좋아요 개수 자체가 Redis에 없는 경우가 존재하기에 lock을 통해 atomic 보장하는 것으로 변경
+```
+
+### 기도제목 게시글 좋아요 리스트 조회
+
+redis cache 같은 곳에 post id > list(member_id, username, user_id) 데이터 적재 필요  
+LIKE, LIKE_CANCEL 이벤트에 따라 최종적으로 해당 list에 insert 혹은 delete를 해야할 필요가 있어 보임
+
+<br>
