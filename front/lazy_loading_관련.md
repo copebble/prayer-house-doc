@@ -71,11 +71,6 @@ void didUpdateWidget(final LazyLoadIndexedStack oldWidget) {
 
 ## :pushpin: TabBar & TabBarView lazy loading
 
-이부분은 아직 확인이 된 것은 아니다.
-
-DefaultTabController를 통해 TabBar, TabBarView를 구현한 위젯이 StatefulWidget이 아니면 lazy loading이 걸리지 않는 것 같다. 
-(실제 StatelessWidget으로 하고 DefaultTabController 내부를 적용하니까 TabBarView 안에 설정한 children 간에 lazy loading이 이루어지지 않는다.)
-
 ```dart
 final tabListViews = _userPrayerTabTypes
   .mapIndexed(
