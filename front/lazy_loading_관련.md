@@ -64,8 +64,10 @@ void didUpdateWidget(final LazyLoadIndexedStack oldWidget) {
 여기서 widget.index가 최초 index와 다른 경우 설정해두었던 widget.children에서 해당 index의 위젯을 가져오게 된다.
 
 상위 위젯에 setState 등으로 tab의 `currentIndex`를 변경하면 rebuild가 일어나면서 LazyLoadIndexedStack에서는 바뀐 tab의 위젯을 가져오게 되고 이 때 build가 되면서 api 호출 발생
-
+`
 이런 방식으로 하단 탭이 이동되는 시점에 바뀐 tab의 위젯이 build가 되면서(lazy loading) 화면에 그려지게 된다.
+
+> 현재 프로젝트에서 Go Router로 bottom navigation bar tab 구성하였기에 `lazy_load_indexed_stack` 관련 내용은 걷어내고 플러그인 삭제하였습니다.
 
 <br>
 
