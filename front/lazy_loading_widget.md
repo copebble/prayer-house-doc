@@ -11,6 +11,8 @@ lazy loading 하는 방법에 대해 알아보고 적용을 하게 되었다.
 
 ## :pushpin: bottom navigation bar에 의한 lazy loading
 
+> 현재는 사용 X,,, go router StatefulShellRoute.indexedStack 사용하여 구현
+
 앱 맨 처음 진입 지점에 bottom navigation bar 기능을 적용하게 된다. 바텀에 있는 탭을 터치하면 해당 화면이 그려지는 형태다.
 하지만 lazy loading을 적용하지 않으면 모든 탭에 대해 build를 하게 되고 각각에 적용되어 있는 api 호출이 불필요하게 발생하게 된다.
 
