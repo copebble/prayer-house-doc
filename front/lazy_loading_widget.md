@@ -9,7 +9,7 @@ lazy loading 하는 방법에 대해 알아보고 적용을 하게 되었다.
 
 <br>
 
-## :pushpin: bottom navigation bar에 의한 lazy loading
+## 📌 bottom navigation bar에 의한 lazy loading
 
 > 현재는 사용 X,,, go router StatefulShellRoute.indexedStack 사용하여 구현
 
@@ -73,7 +73,7 @@ void didUpdateWidget(final LazyLoadIndexedStack oldWidget) {
 
 <br>
 
-## :pushpin: TabBar & TabBarView lazy loading
+## 📌 TabBar & TabBarView lazy loading
 
 ```dart
 final tabListViews = _userPrayerTabTypes
