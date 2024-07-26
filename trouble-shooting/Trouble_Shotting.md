@@ -41,15 +41,3 @@ RedisTemplate 같은 경우 RedisCacheManager 설정과 별개로 동작하고,
 `@Transactional(readOnly = true)` 같이 readOnly 속성이 부여된 트랜잭션의 경우 transaction 동기화 되지 않는다. (롤백되어도 캐싱 처리됨)
 
 위와 같이 설정하면 Transaction 시작시 redis `MULTI`로 트랜잭션 시작(더 알아봐야 될 듯)
-
-### Kafka
-
-```kotlin
-
-@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-fun handleRegisterNewPrayerEvent(event: PrayerLapseEvent.RegisterNewPrayer) {
-    prayerLapsePublishService.publishFirstRegistration(event)
-}
-```
-위와 같이 @TransactionalEventListener 사용해서 진행중인 트랜잭션이 커밋된 이후에 이벤트가 발송되도록 처리  
-위 방식이 아닌 kafkaProducer 자체에 transaction prefix 설정하는 것이 있는데 트랜잭션 롤백되어도 일단 카프카에 발송이 된다는 점에서 해당 방식 사용 X
