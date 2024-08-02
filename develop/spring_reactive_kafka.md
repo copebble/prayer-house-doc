@@ -2,7 +2,11 @@
 
 spring webflux(reactive) & kafka 개발 기록
 
-## :pushpin: MAX_POLL_RECORDS 설정
+## 📌 Spring Kafka consuming retryable 적용
+
+[retryable 적용 내용 작성]
+
+## 📌 MAX_POLL_RECORDS 설정
 
 >✅ reactive kafka consuming 추구하고자 했던 목표
 > 
@@ -27,7 +31,7 @@ val properties = kafkaProperties.buildConsumerProperties(null)
 5개로 설정하면 5개씩 kafka topic에서 꺼내서 consuming
 
 하지만 위 설정만으로 부족
-reactor에서 publish, subsriber간에 처리 속소 간극 발생, 5개씩 꺼내서 사용하는 게 무의미할 정도로 producing된 모든 메시지들을 한꺼번에 꺼내 publishing 하는 상황도 발생 가능
+reactor에서 publish, subsriber간에 처리 속도 간극 발생, 5개씩 꺼내서 사용하는 게 무의미할 정도로 producing된 모든 메시지들을 한꺼번에 꺼내 publishing 하는 상황도 발생 가능
 **이렇게 되면 db connection pool에서 connection 고갈 등 다른 문제를 발생시킬 수 있음**
 
 > publish, subscriber 간 backpressure 설정이 필요하게 됨
@@ -64,7 +68,9 @@ private val bufferCount = AtomicInteger(0)
 ```
 대신에 bufferCount는 atomic이 보장되어야 하기에 `AtomicInteger`를 사용
 
-## :pushpin: References
+<br>
+
+## 📌 References
 
 - [Reactive Kafka Sender & Kafka Receiver](https://godekdls.github.io/Reactor%20Kafka/whatsnewinreactorkafka120release/)
   - reactive kafka 개발하는데 있어서 좋은 참고 자료

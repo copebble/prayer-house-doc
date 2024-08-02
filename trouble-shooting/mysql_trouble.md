@@ -1,6 +1,7 @@
 # MySQL 관련 트러블 슈팅
 
-## :pushpin: Encoding
+
+## 📌 Encoding
 
 mysql 서버 내부에서 데이터 조회시 한글 깨짐 문제
 
@@ -50,9 +51,8 @@ default-character-set       = utf8
 default-character-set       = utf8
 ```
 
-<br>
 
-## :pushpin: MySQL Replication 관련 트러블 슈팅
+## 📌 MySQL Replication 관련 트러블 슈팅
 
 replication 환경에서 개발하면서 마주했던 트러블에 대한 기록
 

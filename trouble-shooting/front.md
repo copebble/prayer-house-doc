@@ -2,8 +2,6 @@
 
 추후 주제별로 분리 가능
 
-<br>
-
 ## 📌 dependOnInheritedWidgetOfExactType
 
 `InheritedWidget` 사용과 관련된 부분

@@ -2,8 +2,7 @@
 
 event consuming application을 Spring Reactive(Webflux) 환경에서 개발하면서 느낀 지극히 개인적인 생각을 담은 노트
 
-
-## :pushpin: Reactive Redis
+## 📌 Reactive Redis
 
 ### Transaction Support 부재
 

@@ -6,7 +6,7 @@ MySQL Replicaton에는 크게 binary log position 방식과 GTID 방식이 있�
 
 <br>
 
-## :pushpin: 구성
+## 📌 구성
 
 GTID 방식은 log position 방식에 비해 비교적 단순
 
@@ -84,6 +84,6 @@ SHOW SLAVE STATUS\G
 
 `START SLAVE;` or `START REPLICA;` replication 시작
 
-### References
+## 📌 References
 
 - [MySQL GTID 를 사용한 Replication(복제) 설정](https://hoing.io/archives/18445)
