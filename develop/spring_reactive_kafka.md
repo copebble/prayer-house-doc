@@ -2,9 +2,13 @@
 
 spring webflux(reactive) & kafka 개발 기록
 
+<br>
+
 ## 📌 Spring Kafka consuming retryable 적용
 
 [retryable 적용 내용 작성]
+
+<br>
 
 ## 📌 MAX_POLL_RECORDS 설정
 

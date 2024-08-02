@@ -2,6 +2,8 @@
 
 프로젝트에 redis 적용하며 알게된 내용 정리
 
+<br>
+
 ## 📌 Redis Transaction
 
 ```

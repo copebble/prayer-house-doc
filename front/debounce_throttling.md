@@ -2,6 +2,7 @@
 
 debounce와 throttling 적용한 내용
 
+<br>
 
 ## 📌 Why?
 
@@ -14,7 +15,7 @@ debounce와 throttling 적용한 내용
 
 알아보니 throttling으로 이를 해결할 수 있을 것 같아서 관련 개념을 찾아보게 되었다.
 
-
+<br>
 
 ## 📌 debounce, throttling 개념
 

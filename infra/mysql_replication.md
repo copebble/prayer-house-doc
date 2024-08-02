@@ -84,6 +84,8 @@ SHOW SLAVE STATUS\G
 
 `START SLAVE;` or `START REPLICA;` replication 시작
 
+<br>
+
 ## 📌 References
 
 - [MySQL GTID 를 사용한 Replication(복제) 설정](https://hoing.io/archives/18445)

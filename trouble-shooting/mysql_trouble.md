@@ -1,5 +1,6 @@
 # MySQL 관련 트러블 슈팅
 
+<br>
 
 ## 📌 Encoding
 
@@ -51,6 +52,7 @@ default-character-set       = utf8
 default-character-set       = utf8
 ```
 
+<br>
 
 ## 📌 MySQL Replication 관련 트러블 슈팅
 
