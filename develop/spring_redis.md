@@ -36,3 +36,13 @@ Redis 관련 Config에서 cacheManager bean에는 `transactionAware` 속성 추�
 `@Transactional(readOnly = true)` 같이 readOnly 속성이 부여된 트랜잭션의 경우 transaction 동기화 되지 않는다. (롤백되어도 캐싱 처리됨)
 **즉, redis의 multi를 수행하지 않는다.**
 
+### Spring @Transactional 분리
+
+이미 상위 메소드에서 `@Transactional`로 감싸져있는 상태에서 **하위 메소드에 redis multi 기능을 사용하고 싶지 않으면 관련 설정을 해야 한다.**
+
+참고로 하위 메소드를 `@Transactional(readOnly = true)`로 감싸도 소용이 없다. 상위 메소드에 설정되어 있는 `@Transactional`의 트랜잭션에 묶여서 처리되기 때문이다.
+
+```kotlin
+@AppTransactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
+```
+`Propagation.NOT_SUPPORTED` 통해 하위 메소드에서는 상위 메소드와 별개로 Transactional을 사용하지 않겠다는 옵션을 추가 설정해야 한다.
