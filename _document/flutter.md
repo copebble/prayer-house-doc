@@ -5,7 +5,7 @@ flutter로 모바일 개발하며 느낀 내용
 
 <br>
 
-## :pushpin: enum class
+## 📌 enum class
 
 ### 일급 함수의 부재
 
@@ -14,7 +14,7 @@ dart enum에서는 오로지 const 성격의 인자만 가능
 
 <br>
 
-## :pushpin: Riverpod
+## 📌 Riverpod
 
 ### 한계
 
