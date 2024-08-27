@@ -10,9 +10,22 @@
 
 (raspberry 기본 설정은 생략)
 
+> All Nodes: 클러스터에 참여하는 모든 노드들 대상(control-plane, worker 모두 포함)
+> Control Plane: only control plane 대상
+
 <br>
 
-## 📌 서버 컴퓨터 설정
+## References
+
+참고 링크 먼저 첨부 (해당 글 보고 진행해도 무방)
+
+- [k8s kubeadm 진행 방법 공식 문서](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
+- [kubeadm으로 설치해보기 (blog)](https://velog.io/@moonblue/kubeadm-%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0)
+- [raspberry pi kubeadm 클러스터 설치 (blog)](https://velog.io/@2h-kim/RaspberryPI-Kubernetes-%EA%B5%AC%EC%B6%95)
+
+<br>
+
+## 📌 서버 컴퓨터 설정 (All Nodes)
 
 - swap off
 - cgroup 설정
@@ -63,8 +76,114 @@ sudo vim /boot/firmware/cmdline.txt
 
 [...기존 내용...] cgroup_memory=1 cgroup_enable=memory (systemd.unified_cgroup_hierarchy=1)
 ```
+
 > 주의 할 점은 해당 cmdline.txt 파일은 반드시 한 줄로 append해서 작성해야 한다.
 > 새 줄로 해서 설정했다가 booting이 안돼서 다시 os를 설치해야 하는 불상사 발생할 수 있음
 
+<br>
 
-이어서 작성할 것
+## 📌 서버 내 k8s repository 설정 (All Nodes)
+
+k8s v1.31
+
+> 공식문서 참고
+> https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+
+```shell
+# k8s repository 설정에 필요한 패키지 설치
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+
+# k8s repository용 public signing key 다운로드
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+```
+위 내용은 공식 문서에 나와 있는 내용
+
+<br>
+
+## 📌 Install kube command program (All Nodes)
+
+k8s cluster 구성을 위한 패키지 설치 진행해야 함
+
+```shell
+wget -qO- get.docker.com | sh
+```
+docker 설치 해야 함
+
+```shell
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+```
+k8s cluster 구성을 위한 kubeadm 패키지와 cluster 구성 및 관리에 필수인 kubelet, kubectl 설치
+
+<br>
+
+## 📌 CRI 구성 (All Nodes)
+
+[Container Runtime Interface](https://kubernetes.io/ko/docs/concepts/architecture/cri/)
+
+> You need a working container runtime on each Node in your cluster, so that the kubelet can launch Pods and their containers.
+
+모든 노드들에 CRI 구성이 필수다. 그래야 kubelet이 각 노드들을 컨트롤 할 수 있는 것 같다.
+
+```shell
+# 없는 경우에만
+mkdir -p /etc/containerd
+containerd config default > /etc/containerd/config.toml
+
+# config.toml 파일에서 SystemdCgroup 설정값 확인 및 변경
+# SystemdCgroup 값이 false 라면 true 로 변경해야 함
+sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+
+# containerd.service 변경사항 적용
+sudo systemctl restart containerd
+```
+
+<br>
+
+## 📌 Control Plane 설정 (Control Plane)
+
+```shell
+kubeadm init \
+--apiserver-advertise-address={Control Plane 동작할 서버 ip}  \
+--pod-network-cidr=192.168.0.0/16
+```
+- `pod-network-cidr`
+  - 컨테이너의 네트워크 대역
+  - `192.168.0.0/16`: 해당 ip 대역으로 한 것은 조금 있다가 설치할 calico의 default 네트워크 대역이기 때문. 다른 걸로 해도 상관 없다.
+
+```
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+sudo kubeadm join [server_url]:6443 --token [...] \
+	--discovery-token-ca-cert-hash sha256:[...]
+```
+성공적으로 적용되면 위와 같은 메시지가 나오는데 그대로 하면 된다.
+
+```shell
+sudo kubeadm join [server_url]:6443 --token [...] \
+	--discovery-token-ca-cert-hash sha256:[...]
+```
+그리고 각 worker node에 위 명령어 입력하면 된다.
