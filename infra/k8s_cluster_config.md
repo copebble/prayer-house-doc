@@ -187,3 +187,36 @@ sudo kubeadm join [server_url]:6443 --token [...] \
 	--discovery-token-ca-cert-hash sha256:[...]
 ```
 그리고 각 worker node에 위 명령어 입력하면 된다.
+
+<br>
+
+## 📌 Calico 설치 (Control Plane)
+
+각 worker node에 join까지 완료되었다면 control plane 서버에서 `kubectl get pods` 해보면 각 node가 NotReady로 나올 것이다.
+
+추가로 플러그인을 적용해야 하는데 다음 과정 진행하면 된다.
+
+쿠베 컨테이너 간 통신을 위한 플러그인 3개 중 하나
+
+- 공식 문서 참고
+    https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart
+
+해당 플러그인이 설치되어 있어야 각 노드 간에 서로 통신이 가능한 상태가 된다.
+
+```shell
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/custom-resources.yaml
+```
+간단하게 설치 가능
+
+<br> 
+
+## 📌 Credential 등록
+
+작성할 것
+
+<br> 
+
+## 📌 Context 등록
+
+작성할 것
