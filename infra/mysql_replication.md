@@ -86,6 +86,58 @@ SHOW SLAVE STATUS\G
 
 <br>
 
+## 📌 Trouble shoot
+
+복제 실패하는 경우가 발생
+
+```mysql
+# replica
+show slave status\G
+```
+
+```mysql
+# replica
+select * from performance_schema.replication_applier_status_by_worker\G;
+```
+어느 지점에서 복제 실패나왔는지 상세 로그 확인
+
+```mysql
+# replica
+set gtid_next='[문제 발생한 GTID]';
+begin;
+commit;
+set gtid_next='AUTOMATIC';
+```
+항상 마무리는 AUTOMATIC으로 다시 원복
+이렇게 해서 에러난 지점은 스킵하는 방식으로 처리 가능
+
+<br>
+
 ## 📌 References
 
 - [MySQL GTID 를 사용한 Replication(복제) 설정](https://hoing.io/archives/18445)
+
+<br>
+
+## 📌 (추가) Raspberry pi 서버 MySQL 설치
+
+raspberry pi os 스펙은 다음과 같다.
+
+- debian 계열 OS
+- ARM, 64-bit
+
+기본적으로 apt package 툴로 설치하려고 하면 `mariadb-server`만 존재한다.
+`mysql-server`는 지원을 안하는 것 같아 보임
+
+본인은 mysql 사용하고 싶었기에 mysql 공식 페이지에서 제공하는 **tar 파일**로 직접 설치하기로 결정
+
+### 파일 다운로드
+
+https://downloads.mysql.com/archives/community/
+
+- 원하는 mysql 버전
+- OS: Linux - Generic
+- OS Version: Linux - Generic (glibc 2.28) (ARM, 64-bit)
+
+다운 받은 파일을 그대로 scp 사용해서 원격 서버에 전송
+
