@@ -211,6 +211,24 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1
 
 <br> 
 
+## 📌 Nginx Ingress Controller 설치
+
+외부에 클러스터 내용을 오픈해야할 때 여러 객체들을 사용할텐데 그 중 `Ingress` 객체를 많이 사용하는 것 같다. 
+Ingress는 routing 명세서 같은 단순 문서이고 이걸 가지고 실제 동작하는 것은 ingress controller에서 하게 된다.
+
+Ingress를 사용할거면 Ingress Controller를 필히 설치해야 한다. 
+그 중 보편적으로 쓰이는 Nginx Ingress Controller 선택
+
+([공식 document 설치 가이드](https://kubernetes.github.io/ingress-nginx/deploy/))
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml
+```
+간단하게 apply yaml로 설정(정말 간단)
+그리고 공식 문서에서 가이드해주는대로 Local test 해볼 것을 추천
+
+<br> 
+
 ## 📌 Credential 등록
 
 작성할 것
