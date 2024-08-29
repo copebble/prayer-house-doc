@@ -227,6 +227,38 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 간단하게 apply yaml로 설정(정말 간단)
 그리고 공식 문서에서 가이드해주는대로 Local test 해볼 것을 추천
 
+### nodeSelector
+
+nginx ingress controller를 설치하면 `ingress-nginx-controller`라는 deployment가 생기고 여기에 묶여 있는 pod가 뜨게 된다.
+
+만약 특정 node에 pod를 위치시키고 싶으면 nodeSelector나 affinity를 사용하면 되는데
+내 프로젝트는 4대의 컴퓨팅 자원을 적절히 분배해야 하기에 부득이 하게 control plane 속한 노드에 위치시켜야 한다.
+
+문제는 control-plane node를 보면 taint가 걸려있다.
+
+```shell
+$ kubectl describe node raspberrypi-5-uel
+Taints: node-role.kubernetes.io/control-plane:NoSchedule
+```
+`NoSchedule` 걸려 있다. (하드하게 해당 노드에 스케줄 되지 않도록 설정)
+
+그래서 `ingress-nginx-controller` deployment yaml 스펙 수정할 때
+toleration 추가했다.
+
+```yaml
+spec:
+  #...
+  nodeSelector:
+    kubernetes.io/hostname: [원하는 노드 이름]
+  tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+    operator: Equal
+  #...
+```
+위와 같이 `nodeSelector`에 hostname이든 뭐든 스케줄 되기 원하는 노드에 대한 내용을 명시하고
+`tolerations` 통해 taint를 무시하도록 설정하면 control-plane으로 스케줄링 되게끔 할 수 있다.
+
 <br> 
 
 ## 📌 Credential 등록
