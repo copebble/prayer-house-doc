@@ -26,8 +26,6 @@ helm chart 사용해서 설치했음
 helm chart가 설치 안된 상태라면 설치 필요
 - [helm document](https://helm.sh/docs/intro/install/)
 
-
-
 ```shell
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
 sudo apt-get install apt-transport-https --yes
