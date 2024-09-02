@@ -222,10 +222,11 @@ Ingress를 사용할거면 Ingress Controller를 필히 설치해야 한다.
 ([공식 document 설치 가이드](https://kubernetes.github.io/ingress-nginx/deploy/))
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/baremetal/deploy.yaml
 ```
 간단하게 apply yaml로 설정(정말 간단)
 그리고 공식 문서에서 가이드해주는대로 Local test 해볼 것을 추천
+**(본인은 직접 서버 구성해서 cluster를 설치한 유형이기 때문에 baremetal 링크로 설치)**
 
 ### nodeSelector
 
@@ -246,6 +247,12 @@ Taints: node-role.kubernetes.io/control-plane:NoSchedule
 toleration 추가했다.
 
 ```yaml
+apiVersion: v1
+kind: Deployment
+metadata:
+  #...
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
 spec:
   #...
   nodeSelector:
@@ -258,6 +265,38 @@ spec:
 ```
 위와 같이 `nodeSelector`에 hostname이든 뭐든 스케줄 되기 원하는 노드에 대한 내용을 명시하고
 `tolerations` 통해 taint를 무시하도록 설정하면 control-plane으로 스케줄링 되게끔 할 수 있다.
+
+### Service 객체 설정
+
+baremetal 방식으로 ingress controller 설치하고 나면 다음과 같이 `NodePort` 유형으로 Service 객체가 생성이 되어 있을 것이다.
+```shell
+kubectl -n ingress-nginx get svc
+kubectl -n ingress-nginx edit svc ingress-nginx-controller
+
+
+```
+type을 `LoadBalancer`로 바꾸면 된다.
+어떻게 보면 온프레미스 방식인 본인 프로젝트 환경에서는 어울리지 않을 수 있다. (실제로 공식 문서에서는 `NodePort`로 설정되어 있음)
+LoadBalancer를 통해 특정 포트에 국한되지 않고 ip를 할당받아서 연동할 수 있다는 점에서 선택하게 됨
+
+> LoadBalancer는 사실 AWS 같은 클라우드 환경에서 사용되는 것이지 온프레미스 방식에서는 사용되지 않으나 사용하려면 MetalLB 같은 플러그인이 있어야 한다. MetalLB는 따로 설정한 ip 범위 안에서 LoadBalancer에 ip를 할당해주는 기능을 하게 된다.
+
+### 그 외 옵션 (좀 더 파헤쳐봐야 하는 부분)
+
+`ingress-nginx-controller` Service 객체에 신박한 옵션이 있는데 아직 완전히 이해가 가지 않음
+
+- `externalTrafficPolicy`
+  - `Cluster` (기본값):
+    - 외부에서 들어오는 트래픽이 클러스터 내 모든 노드에 있는 파드로 분산
+    - 클러스터의 모든 노드가 서비스 엔드포인트로 동작할 수 있다.
+    - 클라이언트의 원래 IP 주소는 유지되지 않으며, 대신 클러스터 노드의 IP 주소로 대체
+      이 때문에, 원래 클라이언트 IP를 필요로 하는 로그나 방화벽 규칙에 문제가 있을 수 있다.
+  - `Local`:
+    - 외부에서 들어오는 트래픽이 해당 서비스 엔드포인트를 가진 노드로만 전달
+    - 클라이언트의 원래 IP 주소가 유지. 이는 원본 IP 주소 기반의 접근 제어나 로깅을 구현해야 할 때 유용
+    - 단, 서비스 엔드포인트가 없는 노드는 트래픽을 받지 않으므로 트래픽 분산이 덜 효율적일 수 있음
+    - 따라서 노드가 고르게 분포되어 있지 않으면 일부 노드에 부하가 집중될 수 있다.
+- `internalTrafficPolicy`
 
 <br> 
 

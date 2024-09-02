@@ -55,8 +55,14 @@ cd argo-cd/
 ```
 압축 풀고 이동
 
-### Local 접속을 위한 helm chart 설정
-
 ```shell
-helm install argocd --create-namespace -n argocd ./ -f values-custom.yaml
+helm install argocd --create-namespace -n argocd ./ -f values.yaml
 ```
+customizing이 몇 개 필요해서 `values-custom.yaml` 따로 copy해서 사용
+
+(기본적인 설치는 완료)
+
+<br>
+
+## :pushpin: Argo CD UI 외부 노출(with HTTPS)
+
