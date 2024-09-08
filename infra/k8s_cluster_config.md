@@ -286,7 +286,7 @@ LoadBalancer를 통해 특정 포트에 국한되지 않고 ip를 할당받아�
 `ingress-nginx-controller` Service 객체에 신박한 옵션이 있는데 아직 완전히 이해가 가지 않음
 
 - `externalTrafficPolicy`
-  - `Cluster` (기본값):
+  - `Cluster` (default):
     - 외부에서 들어오는 트래픽이 클러스터 내 모든 노드에 있는 파드로 분산
     - 클러스터의 모든 노드가 서비스 엔드포인트로 동작할 수 있다.
     - 클라이언트의 원래 IP 주소는 유지되지 않으며, 대신 클러스터 노드의 IP 주소로 대체
@@ -297,6 +297,33 @@ LoadBalancer를 통해 특정 포트에 국한되지 않고 ip를 할당받아�
     - 단, 서비스 엔드포인트가 없는 노드는 트래픽을 받지 않으므로 트래픽 분산이 덜 효율적일 수 있음
     - 따라서 노드가 고르게 분포되어 있지 않으면 일부 노드에 부하가 집중될 수 있다.
 - `internalTrafficPolicy`
+
+<br>
+
+## 📌 Metal LB Installation
+
+[MetalLB doc(installation)](https://metallb.universe.tf/installation/)
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
+
+kubectl -n metallb-system get all
+```
+k8s cluster에 metallb 관련 쿠베 객체들이 설치가 되어 있으면 된다.
+여기에 간단하게 ip address pool만 설정하면 된다.
+
+```shell
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: metallb-ip-address-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - [원하는 ip]-[원하는 ip]
+```
+프로젝트 인프라 환경상 특정 노드 기기 하나에서 외부 트래픽을 받을 것이기에 
+해당 기기의 실제 private ip로 설정함
 
 <br> 
 

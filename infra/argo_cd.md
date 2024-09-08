@@ -18,7 +18,7 @@ helm chart 사용해서 설치했음
 다만 helm chart에서 `values.yaml`에 있는 내용에 설정 정보들을 custom하게 바꿀 수 있어서 본인은 helm chart 설치 방식 선택
 (심지어 helm chart는 따로 Revision도 관리하고 있고 설정 내용을 변경해서 upgrade 해줄 수 있어서 사용하기 간편)
 
-### (Optional) Helm Installation
+### Helm Installation
 
 > helm 설치 전에 기본적으로 k8s cluster가 구축이 되어 있어야 하고 
 > kubectl도 적용된 상태여야 함
@@ -66,3 +66,6 @@ customizing이 몇 개 필요해서 `values-custom.yaml` 따로 copy해서 사�
 
 ## :pushpin: Argo CD UI 외부 노출(with HTTPS)
 
+> nginx ingress controller 설치된 상태여야 함
+
+argocd ui를 https 외부 노출을 
