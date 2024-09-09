@@ -68,4 +68,4 @@ customizing이 몇 개 필요해서 `values-custom.yaml` 따로 copy해서 사�
 
 > nginx ingress controller 설치된 상태여야 함
 
-argocd ui를 https 외부 노출을 
+argocd ui를 https 외부 노출을 위해 k8s ingress 객체 설정이 필요하다.
