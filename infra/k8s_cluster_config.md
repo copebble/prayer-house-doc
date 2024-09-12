@@ -331,6 +331,27 @@ spec:
 
 작성할 것
 
+```shell
+kubectl -n admin create serviceaccount beanie
+
+kubectl create clusterrolebinding cluster-admin-beanie \
+    --clusterrole=cluster-admin \
+    --serviceaccount=admin:beanie
+```
+위의 ServiceAccount 이름, namespace는 임의로 설정 가능
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: beanie-account-token
+  namespace: admin
+  annotations:
+    kubernetes.io/service-account.name: beanie
+type: kubernetes.io/service-account-token
+```
+Secret 생성
+
 <br> 
 
 ## 📌 Context 등록
