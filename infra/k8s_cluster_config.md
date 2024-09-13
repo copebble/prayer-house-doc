@@ -356,4 +356,18 @@ Secret 생성
 
 ## 📌 Context 등록
 
-작성할 것
+```shell
+kubectl config set-credentials [USER_NAME] --token=[TOKEN]
+```
+token은 위에서 생성한 Secret에서 확인 가능
+
+```shell
+kubectl config set-cluster [CLUSTER_NAME] --insecure-skip-tls-verify=true --server [MASTER_NODE_HTTPS_URL]
+kubectl config set-context [CONTEXT_NAME] --cluster=[CLUSTER_NAME] --user=[USER_NAME]
+kubectl config use-context [CONTEXT_NAME]
+```
+`MASTER_NODE_HTTPS_URL` : https로 해야 한다.
+`--insecure-skip-tls-verify=true` : 따로 cluster에 tls 인증 설정이 안되어 있으면 true로 해야하는 듯
+
+> 특히 홈 네트워크에 k8s cluster를 구성한 경우 
+> 도메인 연동해서 외부에 노출해야 할 때 라우터에 `6443` 포트 대상으로 포트 포워딩 해야 한다.
