@@ -140,4 +140,3 @@ https://downloads.mysql.com/archives/community/
 - OS Version: Linux - Generic (glibc 2.28) (ARM, 64-bit)
 
 다운 받은 파일을 그대로 scp 사용해서 원격 서버에 전송
-
