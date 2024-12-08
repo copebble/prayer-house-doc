@@ -134,7 +134,7 @@ k8s cluster 구성을 위한 kubeadm 패키지와 cluster 구성 및 관리에 �
 
 ```shell
 # 없는 경우에만
-mkdir -p /etc/containerd
+sudo mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
 
 # config.toml 파일에서 SystemdCgroup 설정값 확인 및 변경
@@ -371,3 +371,17 @@ kubectl config use-context [CONTEXT_NAME]
 
 > 특히 홈 네트워크에 k8s cluster를 구성한 경우 
 > 도메인 연동해서 외부에 노출해야 할 때 라우터에 `6443` 포트 대상으로 포트 포워딩 해야 한다.
+
+<br>
+
+## 📌 worker node shutdown시 대응
+
+```shell
+ping [master node ip address]
+```
+우선 master node의 ip address로 ping을 보내 icmp 정상적으로 통신되는지 체크
+
+혹여나 문제가 생겨서 worker node 끊겼을 시 
+```shell
+kubeadm 
+```

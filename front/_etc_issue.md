@@ -60,3 +60,10 @@ RootScreen - Tab Page Widgets(각각 riverpod provider watch 중)
 `OffStage`로 각 Tab Page를 감싸서 적용했고 위젯 트리에도 비활성화된 페이지에 대해 제외된 것을 확인할 수 있었지만 한 번 방문했던 tab page에 대해 다시 재방문을 하게 되면 riverpod provider가 rebuild 되면서 데이터 조회를 위해 api 호출을 하게 된다.
 
 `KeepAliveWrapper`, `PageStorageBucket` 등을 사용해보았지만 원하던 방식대로 동작하지 않음
+
+<br>
+
+## 📌 flutter 버전 관련 이슈
+
+Android Studio `settings` 내에 `Languages & Frameworks` > `Android SDK` 메뉴
+`SDK Tools` 탭에 버전 업데이트 하면 된다.

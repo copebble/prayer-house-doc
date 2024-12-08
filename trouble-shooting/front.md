@@ -50,3 +50,18 @@ FutureOr<void> afterFirstLayout(BuildContext context) {
     context.dependOnInheritedWidgetOfExactType<RootBottomNavBarController>()!.turnOff();
 }
 ```
+<br>
+
+## :pushpin: Toast Error
+
+```
+Error: Overlay is null. 
+Please don't use top of the widget tree context (such as Navigator or MaterialApp) or create overlay manually in MaterialApp builder.
+More information 
+- https://github.com/ponnamkarthik/FlutterToast/issues/393
+- https://github.com/ponnamkarthik/FlutterToast/issues/234
+```
+
+<br>
+
+## :pushpin: Android 각종 trouble shooting
