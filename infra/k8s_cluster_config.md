@@ -194,6 +194,9 @@ kubeadm token list
 kubeadm token create
 
 openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+
+# 이게 더 편함(join command 전체 알려줌)
+kubeadm token create --print-join-command
 ```
 - [reference link](https://velog.io/@numerok/kubeadm-join%EC%9C%BC%EB%A1%9C-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%EC%97%90-%EB%85%B8%EB%93%9C-%EC%B6%94%EA%B0%80)
 
@@ -432,3 +435,15 @@ ping [master node ip address]
 ```shell
 kubeadm 
 ```
+
+<br>
+
+## :pushpin: 기타 설정
+
+### node role 부여
+
+```shell
+kubectl label node [NODE_NAME] node-role.kubernetes.io/worker=
+kubectl get nodes
+```
+nodes 정보에 ROLES에 처음에는 `<none>`으로 나올텐데 worker role로 지정할 수 있다.
