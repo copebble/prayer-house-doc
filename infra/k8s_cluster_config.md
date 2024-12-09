@@ -99,8 +99,6 @@ curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
-sudo apt-get install -y kubelet kubeadm kubectl
-sudo apt-mark hold kubelet kubeadm kubectl
 ```
 위 내용은 공식 문서에 나와 있는 내용
 
@@ -133,6 +131,7 @@ k8s cluster 구성을 위한 kubeadm 패키지와 cluster 구성 및 관리에 �
 모든 노드들에 CRI 구성이 필수다. 그래야 kubelet이 각 노드들을 컨트롤 할 수 있는 것 같다.
 
 ```shell
+sudo apt install containerd
 # 없는 경우에만
 sudo mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
@@ -187,6 +186,54 @@ sudo kubeadm join [server_url]:6443 --token [...] \
 	--discovery-token-ca-cert-hash sha256:[...]
 ```
 그리고 각 worker node에 위 명령어 입력하면 된다.
+
+### rejoin 하고자 할 때 (worker node)
+
+```shell
+kubeadm token list
+kubeadm token create
+
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+```
+- [reference link](https://velog.io/@numerok/kubeadm-join%EC%9C%BC%EB%A1%9C-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%EC%97%90-%EB%85%B8%EB%93%9C-%EC%B6%94%EA%B0%80)
+
+### trouble shooting
+```
+[ERROR FileContent--proc-sys-net-ipv4-ip_forward]: /proc/sys/net/ipv4/ip_forward contents are not set to 1
+```
+
+```shell
+sudo vim /etc/sysctl.conf
+## 아래 주석 해제
+#net.ipv4.ip_forward=1
+```
+
+```shell
+ping [control-plane node ip]
+Destination Port Unreachable
+```
+ping 날렸을 때 위와 같이 control-plane node 간 통신이 안될 수 있다.
+
+```shell
+sudo iptables -L -n -v
+# KUBE-IPVS-FILTER 정보 확인
+```
+kube-proxy 설정에서 mode가 ipvs로 세팅되어 있어서 iptable filter 자동 생성.
+해당 filter에 의해 worker-node <> control-plane 간에 통신이 안될 수 있음
+
+```shell
+# control-plane node 에서
+kubectl -n kube-system edit configmap kube-proxy
+# mode: "ipvs" >> "iptables" 변경
+```
+위와 같이 `iptables`로 configmap 변경하고 kubeadm join 실행해야 한다.
+
+```shell
+# worker node
+# kubeadm 초기화 필요할 때
+sudo kubeadm reset
+```
+reset 한 번 하고 reboot 했다가 다시 join 하는 것을 추천
 
 <br>
 
