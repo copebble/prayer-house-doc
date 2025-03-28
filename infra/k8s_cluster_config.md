@@ -6,7 +6,7 @@
 > Debian 계열 Linux 환경 기준
 
 - raspberry pi 4 (2대)
-- raspberry pi 5 (2대)
+- raspberry pi 5 (4대)
 
 (raspberry 기본 설정은 생략)
 
@@ -200,6 +200,13 @@ kubeadm token create --print-join-command
 ```
 - [reference link](https://velog.io/@numerok/kubeadm-join%EC%9C%BC%EB%A1%9C-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%EC%97%90-%EB%85%B8%EB%93%9C-%EC%B6%94%EA%B0%80)
 
+### reset
+
+```shell
+kubeadm reset
+```
+기존에 kubeadm을 통해 cluster 구축하고 join 했던 설정내용들을 초기화하고자 할 때
+
 ### trouble shooting
 ```
 [ERROR FileContent--proc-sys-net-ipv4-ip_forward]: /proc/sys/net/ipv4/ip_forward contents are not set to 1
@@ -254,8 +261,8 @@ reset 한 번 하고 reboot 했다가 다시 join 하는 것을 추천
 해당 플러그인이 설치되어 있어야 각 노드 간에 서로 통신이 가능한 상태가 된다.
 
 ```shell
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/tigera-operator.yaml
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/custom-resources.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/custom-resources.yaml
 ```
 간단하게 설치 가능
 
@@ -272,7 +279,7 @@ Ingress를 사용할거면 Ingress Controller를 필히 설치해야 한다.
 ([공식 document 설치 가이드](https://kubernetes.github.io/ingress-nginx/deploy/))
 
 ```shell
-kubectl apply -f kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/baremetal/deploy.yaml
+kubectl apply -f kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.1/deploy/static/provider/baremetal/deploy.yaml
 ```
 간단하게 apply yaml로 설정(정말 간단)
 그리고 공식 문서에서 가이드해주는대로 Local test 해볼 것을 추천
@@ -322,8 +329,6 @@ baremetal 방식으로 ingress controller 설치하고 나면 다음과 같이 `
 ```shell
 kubectl -n ingress-nginx get svc
 kubectl -n ingress-nginx edit svc ingress-nginx-controller
-
-
 ```
 type을 `LoadBalancer`로 바꾸면 된다.
 어떻게 보면 온프레미스 방식인 본인 프로젝트 환경에서는 어울리지 않을 수 있다. (실제로 공식 문서에서는 `NodePort`로 설정되어 있음)
@@ -355,7 +360,7 @@ LoadBalancer를 통해 특정 포트에 국한되지 않고 ip를 할당받아�
 [MetalLB doc(installation)](https://metallb.universe.tf/installation/)
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
 
 kubectl -n metallb-system get all
 ```
@@ -431,10 +436,7 @@ ping [master node ip address]
 ```
 우선 master node의 ip address로 ping을 보내 icmp 정상적으로 통신되는지 체크
 
-혹여나 문제가 생겨서 worker node 끊겼을 시 
-```shell
-kubeadm 
-```
+혹여나 문제가 생겨서 worker node 끊겼을 시 rejoin 부분 다시 참고
 
 <br>
 
@@ -447,3 +449,8 @@ kubectl label node [NODE_NAME] node-role.kubernetes.io/worker=
 kubectl get nodes
 ```
 nodes 정보에 ROLES에 처음에는 `<none>`으로 나올텐데 worker role로 지정할 수 있다.
+
+```shell
+kubectl label node [NODE_NAME] node-role.kubernetes.io/worker-
+```
+label 제거하고 싶을때 label key 값 뒤에 `-` 붙여주면 된다.
