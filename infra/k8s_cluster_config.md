@@ -261,8 +261,8 @@ reset 한 번 하고 reboot 했다가 다시 join 하는 것을 추천
 해당 플러그인이 설치되어 있어야 각 노드 간에 서로 통신이 가능한 상태가 된다.
 
 ```shell
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/tigera-operator.yaml
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.1/manifests/custom-resources.yaml
+kubectl create -f https://raw.githubusercon tent.com/projectcalico/calico/v3.29.3/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.3/manifests/custom-resources.yaml
 ```
 간단하게 설치 가능
 
