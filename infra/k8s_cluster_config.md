@@ -266,6 +266,48 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.3
 ```
 간단하게 설치 가능
 
+### trouble shooting
+
+- vpn issue
+
+In case a node has vpn interface, it might cause some problem in k8s calico system.
+([reference](https://shivering-isles.com/til/2022/02/Calico-interface-confusion))
+This issue is related to **MTU**.
+
+```shell
+$ kubectl describe installation.operator.tigera.io
+
+Mtu: 1450
+```
+Calico's default MTU is 1450 in my cluster.
+
+```shell
+$ ifconfig
+wg0: ...  mtu 1420
+...
+vxlan.calico: ...  mtu 1370
+```
+When vpn(wireguard) was already installed in the node, the `vxlan.calico` network has less MTU size than wg0(wireguard).
+
+In this case, the Calico default MTU(1450) is different from that of worker node(1370) and it will cause some error in **calico-node** pod.
+
+```shell
+$ kubectl -n calico-system logs calico-node-xxxxx
+felix/vxlan_mgr.go 727: VXLAN device MTU needs to be updated
+device="vxlan.calico" ipVersion=0x4 new=1450 old=1370
+```
+It is recommended not to use a node as a vpn server and k8s worker node at the same time. 
+**It would be better that vpn server and worker node is operated seperately.**
+
+```shell
+$ sudo vim /etc/wireguard/wg0.conf
+MTU = 1420
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart wg-quick@wg0
+```
+You can update MTU size of wireguard network.
+
 <br> 
 
 ## 📌 Nginx Ingress Controller 설치
@@ -437,20 +479,3 @@ ping [master node ip address]
 우선 master node의 ip address로 ping을 보내 icmp 정상적으로 통신되는지 체크
 
 혹여나 문제가 생겨서 worker node 끊겼을 시 rejoin 부분 다시 참고
-
-<br>
-
-## :pushpin: 기타 설정
-
-### node role 부여
-
-```shell
-kubectl label node [NODE_NAME] node-role.kubernetes.io/worker=
-kubectl get nodes
-```
-nodes 정보에 ROLES에 처음에는 `<none>`으로 나올텐데 worker role로 지정할 수 있다.
-
-```shell
-kubectl label node [NODE_NAME] node-role.kubernetes.io/worker-
-```
-label 제거하고 싶을때 label key 값 뒤에 `-` 붙여주면 된다.
