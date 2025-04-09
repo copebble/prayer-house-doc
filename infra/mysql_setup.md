@@ -92,3 +92,86 @@ mysql -uroot -p
 sudo ./bin/mysqladmin shutdown -uroot -p
 ```
 혹여나 프로세스 종료하고 싶으면 mysqladmin 프로그램 통해 shutdown 하면 된다.
+
+<br>
+
+## :pushpin: docker mysql setup (for alpha profile)
+
+I applied mysql for **alpha databases** by setting with using docker compose.
+
+```yaml
+# ~/mysql/docker-compose.yaml
+name: "alpha-db"
+services:
+  source-db:
+    image: mysql:8.0.33
+    container_name: source-db
+    restart: "no"
+    volumes:
+      - ${LOCAL_REPLICA_SETUP_DIR}/source/data:/var/lib/mysql:rw
+      - ${LOCAL_REPLICA_SETUP_DIR}/source/log:/var/log/mysql
+      - ${LOCAL_REPLICA_SETUP_DIR}/source/conf/my.cnf:/etc/my.cnf
+    user: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+
+  replica-db:
+    image: mysql:8.0.33
+    container_name: replica-db
+    restart: "no"
+    volumes:
+      - ${LOCAL_REPLICA_SETUP_DIR}/replica/data:/var/lib/mysql:rw
+      - ${LOCAL_REPLICA_SETUP_DIR}/replica/log:/var/log/mysql
+      - ${LOCAL_REPLICA_SETUP_DIR}/replica/conf/my.cnf:/etc/my.cnf
+    user: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+
+  batch-db:
+    image: mysql:8.0.33
+    container_name: batch-db
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3308:3306"
+```
+I need three databases for replication and batch. 
+(source, replica, batch-db)
+
+It needs `.env` file in the same directory with `docker-compose.yaml` file.
+
+```env
+LOCAL_REPLICA_SETUP_DIR=
+MYSQL_ROOT_PASSWORD=
+```
+And then, some directory should be made if not exists.
+
+```shell
+mkdir -p source/data
+mkdir -p source/conf
+mkdir -p source/log
+mkdir -p replica/data
+mkdir -p replica/conf
+mkdir -p replica/log
+```
+
+```shell
+sudo chmod -R 755 source/
+sudo chmod -R 755 replica/
+sudo chown -R 999:999 source/
+sudo chown -R 999:999 replica/
+```
+It is really important. In the container environment, it will be run by `mysql` user. the `mysql` user equals `999` in that container.
+
+```shell
+docker compose -f docker-compose.yaml up -d
+
+# if you want to remove containers
+docker compose -f docker-compose.yaml down
+```
+Finally, you just run the command.
