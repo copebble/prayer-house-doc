@@ -32,3 +32,18 @@ If you want to delete specific label of node, just replace `=` with `-`.
 ## :pushpin: Get objects
 
 - get all active pods in specific node.
+
+### Secret
+
+- retrieve decoded secret data value
+
+```shell
+kubectl get secret [SECRET_NAME] -o jsonpath='{.data}' | base64 --decode
+```
+just input `-o jsonpath` option.
+```shell
+# data:
+#   hello.world: xxxx
+kubectl get secret [SECRET_NAME] -o jsonpath='{.data.hello\.world}' | base64 --decode
+```
+In case the key name has any character like `.`, escape character should be input with that character.
