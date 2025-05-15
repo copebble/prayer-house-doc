@@ -47,3 +47,10 @@ just input `-o jsonpath` option.
 kubectl get secret [SECRET_NAME] -o jsonpath='{.data.hello\.world}' | base64 --decode
 ```
 In case the key name has any character like `.`, escape character should be input with that character.
+
+- create secret
+
+```shell
+kubectl -n [namespace] create secret generic [secret-name] --from-file=key-name=[path/to/key.pem]
+```
+`
