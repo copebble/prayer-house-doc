@@ -6,7 +6,9 @@
 > Debian 계열 Linux 환경 기준
 
 - raspberry pi 4 (2대)
-- raspberry pi 5 (4대)
+- raspberry pi 5 (6대)
+
+alpha-cluster(with infra): 4 / prod-cluster: 4
 
 (raspberry 기본 설정은 생략)
 
