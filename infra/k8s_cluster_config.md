@@ -137,7 +137,8 @@ sudo apt install containerd
 # 없는 경우에만
 sudo mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
-
+# 만약 위의 내용 실행시 permission denied 나오는 경우 아래 명령어로 실행
+containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
 # config.toml 파일에서 SystemdCgroup 설정값 확인 및 변경
 # SystemdCgroup 값이 false 라면 true 로 변경해야 함
 sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
