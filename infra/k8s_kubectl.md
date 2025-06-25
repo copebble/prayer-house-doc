@@ -53,4 +53,11 @@ In case the key name has any character like `.`, escape character should be inpu
 ```shell
 kubectl -n [namespace] create secret generic [secret-name] --from-file=key-name=[path/to/key.pem]
 ```
-`
+
+<br>
+
+## :pushpin: network check
+
+```shell
+kubectl run netshoot-tools --rm -i --tty --image nicolaka/netshoot
+```
