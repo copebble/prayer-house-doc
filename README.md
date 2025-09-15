@@ -1,5 +1,5 @@
 # prayer house doc
 
-기도의 집 애플리케이션 개발 및 공부하면서 알게 된 내용과 마주했던 문제들에 대해서 해결해 나가는 과정을 기록한 repository 입니다.
+This repository documents the process of developing the `Prayer House` application and the lessons learned along the way.
 
-하나의 문제에 대해서 여러 고민을 했던 흔적들과 이와 관련한 주제들을 가지고 공부를 했던 내용들을 두서 없이 작성한 내용입니다.
+It contains records of the challenges I encountered, the various approaches I considered to solve them, and the related topics I studied. The notes are written in an unstructured manner, reflecting my thought process as I explored and experimented with different ideas.
