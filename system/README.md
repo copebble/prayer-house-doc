@@ -1,6 +1,6 @@
 # System Introduction
 
-My server applications run on a cloud server. 
+My server applications run on a cloud server.  
 The system is organized into:
 
 - Application development
