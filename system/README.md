@@ -11,7 +11,7 @@ The system is organized into:
 
 ## System Architecture
 
-<p align="center"><img width="1384" height="1162" alt="Image" src="https://github.com/user-attachments/assets/1731ab14-653b-483c-b7c9-657e95db3764" /></p>
+<p align="center"><img width="1384" height="1165" alt="Image" src="https://github.com/user-attachments/assets/6d682872-eaf1-44ab-b9cf-ff0e2c827257" /></p>
 
 - Application
   - Java, Kotlin
